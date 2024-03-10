@@ -20,4 +20,10 @@ public:
 	virtual void BeginPlay() override;
 	UPROPERTY(EditAnywhere, Category = Speed)
 	float MovingSpeed = 0;
+	UPROPERTY(EditAnywhere,meta=(MakeEditWidget=true))
+	FVector TargetLocation;
+
+private:
+	FVector GlobalTargetLocation;
+	FVector GlobalStartLocation;
 };

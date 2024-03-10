@@ -13,9 +13,19 @@ AMovingPlatform::AMovingPlatform()
 void AMovingPlatform::Tick(float DeltaSeconds)
 {
 	Super::Tick(DeltaSeconds);
-	if (!HasAuthority()) {
+	if (HasAuthority()) {
+
+
 		auto location = GetActorLocation();
-		location += {MovingSpeed * DeltaSeconds, 0, 0};
+		auto Dir = (GlobalTargetLocation - GlobalStartLocation).GetSafeNormal();
+		float Length = (GlobalTargetLocation - GlobalStartLocation).Size();
+		float Travelled = (location - GlobalStartLocation).Size();
+		if(Length <= Travelled)
+		{
+			Swap(GlobalStartLocation, GlobalTargetLocation);
+		}
+		
+		location += Dir * MovingSpeed * DeltaSeconds;
 		SetActorLocation(location);
 	}
 }
@@ -23,8 +33,10 @@ void AMovingPlatform::Tick(float DeltaSeconds)
 void AMovingPlatform::BeginPlay()
 {
 	Super::BeginPlay();
-	if (!HasAuthority()) {
+	if (HasAuthority()) {
 		SetReplicates(true);
 		SetReplicateMovement(true);
 	}
+	GlobalStartLocation = GetActorLocation();
+	GlobalTargetLocation = GetTransform().TransformPosition(TargetLocation);
 }
