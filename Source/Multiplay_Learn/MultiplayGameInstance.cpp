@@ -35,4 +35,8 @@ void UMultiplayGameInstance::Join(const FString& Address)
 	{
 		GEngine->AddOnScreenDebugMessage(0, 2, FColor::Green, FString::Printf(TEXT("Join %s"), *Address));;
 	}
+	auto pc = GetFirstLocalPlayerController(GetWorld());
+	if (pc) {
+		pc->ClientTravel(Address, ETravelType::TRAVEL_Absolute);
+	}
 }
