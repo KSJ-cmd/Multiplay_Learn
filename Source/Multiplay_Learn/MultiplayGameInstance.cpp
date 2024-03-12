@@ -21,6 +21,12 @@ void UMultiplayGameInstance::Host()
 	{
 		GEngine->AddOnScreenDebugMessage(0, 2, FColor::Green, TEXT("Host"));
 	}
+
+	auto world = GetWorld();
+	if(world)
+	{
+		world->ServerTravel("/Game/ThirdPerson/Maps/ThirdPersonMap?listen");
+	}
 }
 
 void UMultiplayGameInstance::Join(const FString& Address)
