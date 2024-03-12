@@ -2,7 +2,7 @@
 
 
 #include "MultiplayGameInstance.h"
-
+#include "Engine/Engine.h"
 UMultiplayGameInstance::UMultiplayGameInstance(const FObjectInitializer& ObjectInitializer)
 {
 	UE_LOG(LogTemp, Warning, TEXT("GameInstance Constructor"));
@@ -12,4 +12,21 @@ void UMultiplayGameInstance::Init()
 {
 	Super::Init();
 	UE_LOG(LogTemp, Warning, TEXT("GameInstance Init"));
+}
+
+void UMultiplayGameInstance::Host()
+{
+	UE_LOG(LogTemp, Warning, TEXT("GameInstance Exec Host"));
+	if(GEngine)
+	{
+		GEngine->AddOnScreenDebugMessage(0, 2, FColor::Green, TEXT("Host"));
+	}
+}
+
+void UMultiplayGameInstance::Join(const FString& Address)
+{
+	if (GEngine)
+	{
+		GEngine->AddOnScreenDebugMessage(0, 2, FColor::Green, FString::Printf(TEXT("Join %s"), *Address));;
+	}
 }
