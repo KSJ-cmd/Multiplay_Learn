@@ -30,6 +30,16 @@ void UMultiplayGameInstance::LoadMenu()
 		auto Menu = CreateWidget<UUserWidget>(this, MainMenuClass);
 		if (Menu != nullptr) {
 			Menu->AddToViewport();
+
+			auto pc = GetFirstLocalPlayerController(GetWorld());
+			if (pc) {
+				FInputModeUIOnly InputModeData;
+				InputModeData.SetWidgetToFocus(Menu->TakeWidget());
+				InputModeData.SetLockMouseToViewportBehavior(EMouseLockMode::DoNotLock);
+
+				pc->SetInputMode(InputModeData);
+				pc->bShowMouseCursor = true;
+			}
 		}
 	}
 	
