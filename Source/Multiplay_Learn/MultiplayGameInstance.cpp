@@ -24,6 +24,17 @@ void UMultiplayGameInstance::Init()
 	UE_LOG(LogTemp, Warning, TEXT("MainMenu class : %s"),*MainMenuClass->GetName());
 }
 
+void UMultiplayGameInstance::LoadMenu()
+{
+	if (MainMenuClass!= nullptr) {
+		auto Menu = CreateWidget<UUserWidget>(this, MainMenuClass);
+		if (Menu != nullptr) {
+			Menu->AddToViewport();
+		}
+	}
+	
+}
+
 void UMultiplayGameInstance::Host()
 {
 	UE_LOG(LogTemp, Warning, TEXT("GameInstance Exec Host"));
