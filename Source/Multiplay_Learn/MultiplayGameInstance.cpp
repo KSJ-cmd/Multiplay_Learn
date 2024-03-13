@@ -3,8 +3,17 @@
 
 #include "MultiplayGameInstance.h"
 #include "Engine/Engine.h"
+#include "Blueprint/UserWidget.h"
+#include "UObject/ConstructorHelpers.h"
 UMultiplayGameInstance::UMultiplayGameInstance(const FObjectInitializer& ObjectInitializer)
 {
+	static ConstructorHelpers::FClassFinder<UUserWidget> MainMenuBPClass(TEXT("/Game/MenuSystem/WBP_MainMenu"));
+	if(MainMenuBPClass.Class!=nullptr)
+	{
+		MainMenuClass = MainMenuBPClass.Class;
+	}
+
+
 	UE_LOG(LogTemp, Warning, TEXT("GameInstance Constructor"));
 }
 
@@ -12,6 +21,7 @@ void UMultiplayGameInstance::Init()
 {
 	Super::Init();
 	UE_LOG(LogTemp, Warning, TEXT("GameInstance Init"));
+	UE_LOG(LogTemp, Warning, TEXT("MainMenu class : %s"),*MainMenuClass->GetName());
 }
 
 void UMultiplayGameInstance::Host()
