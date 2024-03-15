@@ -13,10 +13,17 @@ UCLASS()
 class MULTIPLAY_LEARN_API UMainMenu : public UUserWidget
 {
 	GENERATED_BODY()
-
-	UPROPERTY(meta=(BindWidget))
+protected:
+	virtual bool Initialize() override;
+private:
+	UPROPERTY(meta = (BindWidget))
 	class UButton* Host;
 	UPROPERTY(meta = (BindWidget))
 	class UButton* Join;
 
+	UFUNCTION()
+	void host();
+
+	UFUNCTION()
+	void join();
 };
