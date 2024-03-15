@@ -4,13 +4,14 @@
 
 #include "CoreMinimal.h"
 #include "Engine/GameInstance.h"
+#include "MenuSystem/MenuInterface.h"
 #include "MultiplayGameInstance.generated.h"
 
 /**
  * 
  */
 UCLASS()
-class MULTIPLAY_LEARN_API UMultiplayGameInstance : public UGameInstance
+class MULTIPLAY_LEARN_API UMultiplayGameInstance : public UGameInstance,public IMenuInterface
 {
 	GENERATED_BODY()
 public:
@@ -21,8 +22,8 @@ public:
 	UFUNCTION(BlueprintCallable)
 	void LoadMenu();
 
-	UFUNCTION(Exec)
-	void Host();
+	UFUNCTION()
+	virtual void Host() override;
 
 	UFUNCTION(Exec)
 	void Join(const FString& Address);

@@ -5,33 +5,39 @@
 #include "Components/Button.h"
 #include "Multiplay_Learn/MultiplayGameInstance.h"
 
-bool UMainMenu::Initialize()
+void UMainMenu::SetMenuInterface(IMenuInterface* menuInterface)
 {
-
-	Host->OnClicked.AddDynamic(this, &UMainMenu::host);
-	Join->OnClicked.AddDynamic(this, &UMainMenu::join);
-
-	return Super::Initialize();
+	this->MenuInterface = menuInterface;
 }
 
-void UMainMenu::host()
+bool UMainMenu::Initialize()
 {
-	auto GI = Cast<UMultiplayGameInstance>(GetGameInstance());
-	if(!GI)
+	auto success = Super::Initialize();
+	if (!success) return false;
+
+	Host->OnClicked.AddDynamic(this, &UMainMenu::UMainMenu::HostServer);
+	//Join->OnClicked.AddDynamic(this, &UMainMenu::join);
+	
+	return true;
+}
+
+void UMainMenu::HostServer()
+{
+
+	if(!MenuInterface)
 	{
 		UE_LOG(LogTemp, Warning, 
 			TEXT("GameInstance nullptr : MainMenu Host Button"));
 	}
-	GI->Host();
+	MenuInterface->Host();
 }
 
-void UMainMenu::join()
+void UMainMenu::JoinServer()
 {
-	auto GI = Cast<UMultiplayGameInstance>(GetGameInstance());
-	if (!GI)
+	if (!MenuInterface)
 	{
 		UE_LOG(LogTemp, Warning,
 			TEXT("GameInstance nullptr : MainMenu Join Button"));
 	}
-	GI->Join("175.204.64.29");
+	//MenuInterface->Join();
 }

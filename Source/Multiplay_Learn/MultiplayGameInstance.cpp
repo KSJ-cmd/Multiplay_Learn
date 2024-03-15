@@ -5,6 +5,7 @@
 #include "Engine/Engine.h"
 #include "Blueprint/UserWidget.h"
 #include "UObject/ConstructorHelpers.h"
+#include "MenuSystem/MainMenu.h"
 UMultiplayGameInstance::UMultiplayGameInstance(const FObjectInitializer& ObjectInitializer)
 {
 	static ConstructorHelpers::FClassFinder<UUserWidget> MainMenuBPClass(TEXT("/Game/MenuSystem/WBP_MainMenu"));
@@ -27,10 +28,9 @@ void UMultiplayGameInstance::Init()
 void UMultiplayGameInstance::LoadMenu()
 {
 	if (MainMenuClass!= nullptr) {
-		auto Menu = CreateWidget<UUserWidget>(this, MainMenuClass);
+		auto Menu = CreateWidget<UMainMenu>(this, MainMenuClass);
 		if (Menu != nullptr) {
 			Menu->AddToViewport();
-
 			auto pc = GetFirstLocalPlayerController(GetWorld());
 			if (pc) {
 				FInputModeUIOnly InputModeData;
@@ -39,6 +39,8 @@ void UMultiplayGameInstance::LoadMenu()
 
 				pc->SetInputMode(InputModeData);
 				pc->bShowMouseCursor = true;
+
+				Menu->SetMenuInterface(this);
 			}
 		}
 	}

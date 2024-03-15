@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "Blueprint/UserWidget.h"
+#include "MenuSystem/MenuInterface.h"
 #include "MainMenu.generated.h"
 
 /**
@@ -13,17 +14,22 @@ UCLASS()
 class MULTIPLAY_LEARN_API UMainMenu : public UUserWidget
 {
 	GENERATED_BODY()
+public:
+	void SetMenuInterface(IMenuInterface* menuInterface);
 protected:
 	virtual bool Initialize() override;
 private:
+
 	UPROPERTY(meta = (BindWidget))
 	class UButton* Host;
 	UPROPERTY(meta = (BindWidget))
 	class UButton* Join;
 
 	UFUNCTION()
-	void host();
+	void HostServer();
 
 	UFUNCTION()
-	void join();
+	void JoinServer();
+
+	IMenuInterface* MenuInterface;
 };
