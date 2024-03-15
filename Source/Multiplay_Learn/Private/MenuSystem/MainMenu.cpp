@@ -10,6 +10,32 @@ void UMainMenu::SetMenuInterface(IMenuInterface* menuInterface)
 	this->MenuInterface = menuInterface;
 }
 
+void UMainMenu::Setup()
+{
+	this->AddToViewport();
+
+	auto pc = GetWorld()->GetFirstPlayerController();
+	if (pc) {
+		FInputModeUIOnly InputModeData;
+		InputModeData.SetWidgetToFocus(this->TakeWidget());
+		InputModeData.SetLockMouseToViewportBehavior(EMouseLockMode::DoNotLock);
+
+		pc->SetInputMode(InputModeData);
+		pc->bShowMouseCursor = true;
+	}
+}
+
+void UMainMenu::Teardown()
+{
+	auto pc = GetWorld()->GetFirstPlayerController();
+	if (pc) {
+		FInputModeGameOnly InputModeData;
+		pc->SetInputMode(InputModeData);
+		pc->bShowMouseCursor = false;
+	}
+	this->RemoveFromParent();
+}
+
 bool UMainMenu::Initialize()
 {
 	auto success = Super::Initialize();

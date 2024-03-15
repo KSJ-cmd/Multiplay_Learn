@@ -28,20 +28,10 @@ void UMultiplayGameInstance::Init()
 void UMultiplayGameInstance::LoadMenu()
 {
 	if (MainMenuClass!= nullptr) {
-		auto Menu = CreateWidget<UMainMenu>(this, MainMenuClass);
+		Menu = CreateWidget<UMainMenu>(this, MainMenuClass);
 		if (Menu != nullptr) {
-			Menu->AddToViewport();
-			auto pc = GetFirstLocalPlayerController(GetWorld());
-			if (pc) {
-				FInputModeUIOnly InputModeData;
-				InputModeData.SetWidgetToFocus(Menu->TakeWidget());
-				InputModeData.SetLockMouseToViewportBehavior(EMouseLockMode::DoNotLock);
-
-				pc->SetInputMode(InputModeData);
-				pc->bShowMouseCursor = true;
-
-				Menu->SetMenuInterface(this);
-			}
+			Menu->Setup();
+			Menu->SetMenuInterface(this);
 		}
 	}
 	
@@ -54,7 +44,10 @@ void UMultiplayGameInstance::Host()
 	{
 		GEngine->AddOnScreenDebugMessage(0, 2, FColor::Green, TEXT("Host"));
 	}
-
+	if(Menu!=nullptr)
+	{
+		Menu->Teardown();
+	}
 	auto world = GetWorld();
 	if(world)
 	{

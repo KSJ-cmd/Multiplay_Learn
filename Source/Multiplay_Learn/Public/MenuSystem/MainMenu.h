@@ -16,6 +16,10 @@ class MULTIPLAY_LEARN_API UMainMenu : public UUserWidget
 	GENERATED_BODY()
 public:
 	void SetMenuInterface(IMenuInterface* menuInterface);
+
+	void Setup();
+	void Teardown();
+	
 protected:
 	virtual bool Initialize() override;
 private:
