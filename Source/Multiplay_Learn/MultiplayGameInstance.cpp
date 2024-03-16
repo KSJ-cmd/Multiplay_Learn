@@ -6,6 +6,7 @@
 #include "Blueprint/UserWidget.h"
 #include "UObject/ConstructorHelpers.h"
 #include "MenuSystem/MainMenu.h"
+#include "MenuSystem/InGameMenu.h"
 UMultiplayGameInstance::UMultiplayGameInstance(const FObjectInitializer& ObjectInitializer)
 {
 	static ConstructorHelpers::FClassFinder<UUserWidget> MainMenuBPClass(TEXT("/Game/MenuSystem/WBP_MainMenu"));
@@ -13,6 +14,12 @@ UMultiplayGameInstance::UMultiplayGameInstance(const FObjectInitializer& ObjectI
 	{
 		MainMenuClass = MainMenuBPClass.Class;
 	}
+	static ConstructorHelpers::FClassFinder<UUserWidget> InGameMenuBPClass(TEXT("/Game/MenuSystem/WBP_InGameMenu"));
+	if (MainMenuBPClass.Class != nullptr)
+	{
+		InGameMenuClass = InGameMenuBPClass.Class;
+	}
+
 
 
 	UE_LOG(LogTemp, Warning, TEXT("GameInstance Constructor"));
@@ -23,18 +30,31 @@ void UMultiplayGameInstance::Init()
 	Super::Init();
 	UE_LOG(LogTemp, Warning, TEXT("GameInstance Init"));
 	UE_LOG(LogTemp, Warning, TEXT("MainMenu class : %s"),*MainMenuClass->GetName());
+	UE_LOG(LogTemp, Warning, TEXT("MainMenu class : %s"), *InGameMenuClass->GetName());
+
 }
 
 void UMultiplayGameInstance::LoadMenu()
 {
 	if (MainMenuClass!= nullptr) {
-		Menu = CreateWidget<UMainMenu>(this, MainMenuClass);
-		if (Menu != nullptr) {
-			Menu->Setup();
-			Menu->SetMenuInterface(this);
+		Main = CreateWidget<UMainMenu>(this, MainMenuClass);
+		if (Main != nullptr) {
+			Main->Setup();
+			Main->SetMenuInterface(this);
 		}
 	}
 	
+}
+
+void UMultiplayGameInstance::LoadInGameMenu()
+{
+	if (InGameMenuClass != nullptr) {
+		InGame = CreateWidget<UInGameMenu>(this, InGameMenuClass);
+		if (InGame != nullptr) {
+			InGame->Setup();
+			InGame->SetMenuInterface(this);
+		}
+	}
 }
 
 void UMultiplayGameInstance::Host()
@@ -44,9 +64,9 @@ void UMultiplayGameInstance::Host()
 	{
 		GEngine->AddOnScreenDebugMessage(0, 2, FColor::Green, TEXT("Host"));
 	}
-	if(Menu!=nullptr)
+	if(Main!=nullptr)
 	{
-		Menu->Teardown();
+		Main->Teardown();
 	}
 	auto world = GetWorld();
 	if(world)
@@ -57,9 +77,9 @@ void UMultiplayGameInstance::Host()
 
 void UMultiplayGameInstance::Join(const FString& Address)
 {
-	if (Menu != nullptr)
+	if (Main != nullptr)
 	{
-		Menu->Teardown();
+		Main->Teardown();
 	}
 	if (GEngine)
 	{

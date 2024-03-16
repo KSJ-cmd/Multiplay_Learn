@@ -3,8 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "Blueprint/UserWidget.h"
-#include "MenuSystem/MenuInterface.h"
+#include "MenuWidget.h"
 #include "MainMenu.generated.h"
 
 class UEditableTextBox;
@@ -13,14 +12,10 @@ class UWidgetSwitcher;
  * 
  */
 UCLASS()
-class MULTIPLAY_LEARN_API UMainMenu : public UUserWidget
+class MULTIPLAY_LEARN_API UMainMenu : public UMenuWidget
 {
 	GENERATED_BODY()
-public:
-	void SetMenuInterface(IMenuInterface* menuInterface);
 
-	void Setup();
-	void Teardown();
 	
 protected:
 	virtual bool Initialize() override;
@@ -63,5 +58,4 @@ private:
 	UFUNCTION()
 	void IPJoin();
 
-	IMenuInterface* MenuInterface;
 };
