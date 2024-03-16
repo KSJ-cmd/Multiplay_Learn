@@ -57,6 +57,10 @@ void UMultiplayGameInstance::Host()
 
 void UMultiplayGameInstance::Join(const FString& Address)
 {
+	if (Menu != nullptr)
+	{
+		Menu->Teardown();
+	}
 	if (GEngine)
 	{
 		GEngine->AddOnScreenDebugMessage(0, 2, FColor::Green, FString::Printf(TEXT("Join %s"), *Address));;

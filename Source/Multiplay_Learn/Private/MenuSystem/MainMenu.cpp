@@ -3,6 +3,8 @@
 
 #include "MenuSystem/MainMenu.h"
 #include "Components/Button.h"
+#include "Components/EditableTextBox.h"
+#include "Components/WidgetSwitcher.h"
 #include "Multiplay_Learn/MultiplayGameInstance.h"
 
 void UMainMenu::SetMenuInterface(IMenuInterface* menuInterface)
@@ -40,10 +42,14 @@ bool UMainMenu::Initialize()
 {
 	auto success = Super::Initialize();
 	if (!success) return false;
-
-	Host->OnClicked.AddDynamic(this, &UMainMenu::UMainMenu::HostServer);
-	//Join->OnClicked.AddDynamic(this, &UMainMenu::join);
-	
+	if(!HostButton) return false;
+	HostButton->OnClicked.AddDynamic(this, &UMainMenu::UMainMenu::HostServer);
+	if (!JoinButton) return false;
+	JoinButton->OnClicked.AddDynamic(this, &UMainMenu::UMainMenu::OpenJoinMenu);
+	if (!CancelButton) return false;
+	CancelButton->OnClicked.AddDynamic(this, &UMainMenu::CancelMenu);
+	if (!AddressButton) return false;
+	AddressButton->OnClicked.AddDynamic(this, &UMainMenu::IPJoin);
 	return true;
 }
 
@@ -58,12 +64,37 @@ void UMainMenu::HostServer()
 	MenuInterface->Host();
 }
 
-void UMainMenu::JoinServer()
+void UMainMenu::OpenJoinMenu()
 {
 	if (!MenuInterface)
 	{
 		UE_LOG(LogTemp, Warning,
 			TEXT("GameInstance nullptr : MainMenu Join Button"));
 	}
+	MenuSwitcher->SetActiveWidget(JoinMenu);
 	//MenuInterface->Join();
+}
+
+void UMainMenu::CancelMenu()
+{
+	if(MenuSwitcher==nullptr)
+	{
+		UE_LOG(LogTemp, Warning,
+			TEXT("GameInstance nullptr : Input_Join_IP_Menu Switcher"));
+		return;
+	}
+	MenuSwitcher->SetActiveWidget(MainMenu);
+}
+
+void UMainMenu::IPJoin()
+{
+	if (!MenuInterface)
+	{
+		UE_LOG(LogTemp, Warning,
+			TEXT("GameInstance nullptr : MainMenu IPJoin Button"));
+	}
+	if (!AddressInput) return;
+	auto address = AddressInput->GetText();
+	MenuInterface->Join(address.ToString());
+	
 }
