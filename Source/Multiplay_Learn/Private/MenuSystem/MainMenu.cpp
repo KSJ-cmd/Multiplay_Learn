@@ -12,14 +12,22 @@ bool UMainMenu::Initialize()
 {
 	auto success = Super::Initialize();
 	if (!success) return false;
+
 	if(!HostButton) return false;
-	HostButton->OnClicked.AddDynamic(this, &UMainMenu::UMainMenu::HostServer);
+	HostButton->OnClicked.AddDynamic(this, &UMainMenu::HostServer);
+
 	if (!JoinButton) return false;
-	JoinButton->OnClicked.AddDynamic(this, &UMainMenu::UMainMenu::OpenJoinMenu);
+	JoinButton->OnClicked.AddDynamic(this, &UMainMenu::OpenJoinMenu);
+
+	if (!QuitButton) return false;
+	QuitButton->OnClicked.AddDynamic(this, &UMainMenu::Quit);
+
 	if (!CancelButton) return false;
 	CancelButton->OnClicked.AddDynamic(this, &UMainMenu::CancelMenu);
+
 	if (!AddressButton) return false;
 	AddressButton->OnClicked.AddDynamic(this, &UMainMenu::IPJoin);
+
 	return true;
 }
 
@@ -43,6 +51,15 @@ void UMainMenu::OpenJoinMenu()
 	}
 	MenuSwitcher->SetActiveWidget(JoinMenu);
 	//MenuInterface->Join();
+}
+
+void UMainMenu::Quit()
+{
+	auto pc = GetWorld()->GetFirstPlayerController();
+	if(pc)
+	{
+		pc->ConsoleCommand("quit");
+	}
 }
 
 void UMainMenu::CancelMenu()

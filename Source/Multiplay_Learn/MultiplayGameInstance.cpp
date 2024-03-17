@@ -90,3 +90,11 @@ void UMultiplayGameInstance::Join(const FString& Address)
 		pc->ClientTravel(Address, ETravelType::TRAVEL_Absolute);
 	}
 }
+
+void UMultiplayGameInstance::LoadMainMenu()
+{
+	auto pc = GetFirstLocalPlayerController(GetWorld());
+	if (pc) {
+		pc->ClientTravel("/Game/Multiplay_Learn/Maps/MainMenu", ETravelType::TRAVEL_Absolute);
+	}
+}
