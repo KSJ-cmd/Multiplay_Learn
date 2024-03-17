@@ -7,6 +7,7 @@
 #include "MenuSystem/MenuInterface.h"
 #include "MultiplayGameInstance.generated.h"
 
+class IOnlineSubsystem;
 /**
  * 
  */
@@ -20,7 +21,7 @@ public:
 	virtual void Init() override;
 
 	UFUNCTION(BlueprintCallable)
-	void LoadMenu();
+	void LoadMenuWidget();
 	UFUNCTION(BlueprintCallable)
 	void LoadInGameMenu();
 
@@ -39,4 +40,5 @@ private:
 
 	class UMainMenu* Main;
 	class UInGameMenu* InGame;
+	IOnlineSubsystem* OnlineSubsystem;
 };

@@ -29,13 +29,20 @@ UMultiplayGameInstance::UMultiplayGameInstance(const FObjectInitializer& ObjectI
 void UMultiplayGameInstance::Init()
 {
 	Super::Init();
+	OnlineSubsystem = IOnlineSubsystem::Get();
+	if(OnlineSubsystem!=nullptr)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("OnlineSubsystem class : %s"), *OnlineSubsystem->GetSubsystemName().ToString());
+
+	}else
+	{
+		UE_LOG(LogTemp, Warning, TEXT("OnlineSubsystem no class "));
+	}
 	UE_LOG(LogTemp, Warning, TEXT("GameInstance Init"));
-	UE_LOG(LogTemp, Warning, TEXT("MainMenu class : %s"),*MainMenuClass->GetName());
-	UE_LOG(LogTemp, Warning, TEXT("MainMenu class : %s"), *InGameMenuClass->GetName());
 
 }
 
-void UMultiplayGameInstance::LoadMenu()
+void UMultiplayGameInstance::LoadMenuWidget()
 {
 	if (MainMenuClass!= nullptr) {
 		Main = CreateWidget<UMainMenu>(this, MainMenuClass);
