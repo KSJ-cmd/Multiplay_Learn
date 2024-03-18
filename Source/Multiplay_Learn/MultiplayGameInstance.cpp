@@ -33,6 +33,13 @@ void UMultiplayGameInstance::Init()
 	if(OnlineSubsystem!=nullptr)
 	{
 		UE_LOG(LogTemp, Warning, TEXT("OnlineSubsystem class : %s"), *OnlineSubsystem->GetSubsystemName().ToString());
+		UE_LOG(LogTemp, Warning, TEXT("OnlineSubsystem class : %s"), *OnlineSubsystem->GetOnlineServiceName().ToString());
+
+		auto SessionInterface = OnlineSubsystem->GetSessionInterface();
+		if(SessionInterface.IsValid())
+		{
+			UE_LOG(LogTemp, Warning, TEXT("Online Session Interface isValid"));
+		}
 
 	}else
 	{
