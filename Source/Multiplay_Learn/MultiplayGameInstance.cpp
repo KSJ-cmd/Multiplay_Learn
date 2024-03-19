@@ -8,6 +8,9 @@
 #include "MenuSystem/MainMenu.h"
 #include "MenuSystem/InGameMenu.h"
 #include "OnlineSubsystem.h"
+#include "OnlineSessionSettings.h"
+#include "Interfaces/OnlineSessionInterface.h"
+
 UMultiplayGameInstance::UMultiplayGameInstance(const FObjectInitializer& ObjectInitializer)
 {
 	static ConstructorHelpers::FClassFinder<UUserWidget> MainMenuBPClass(TEXT("/Game/MenuSystem/WBP_MainMenu"));
@@ -34,11 +37,11 @@ void UMultiplayGameInstance::Init()
 	{
 		UE_LOG(LogTemp, Warning, TEXT("OnlineSubsystem class : %s"), *OnlineSubsystem->GetSubsystemName().ToString());
 		UE_LOG(LogTemp, Warning, TEXT("OnlineSubsystem class : %s"), *OnlineSubsystem->GetOnlineServiceName().ToString());
-
-		auto SessionInterface = OnlineSubsystem->GetSessionInterface();
-		if(SessionInterface.IsValid())
+		const IOnlineSessionPtr SessionInterface = OnlineSubsystem->GetSessionInterface();
+		if (SessionInterface.IsValid())
 		{
-			UE_LOG(LogTemp, Warning, TEXT("Online Session Interface isValid"));
+
+			SessionInterface->OnCreateSessionCompleteDelegates.AddUObject(this, &UMultiplayGameInstance::OnCreateSessionComplete);
 		}
 
 	}else
@@ -74,19 +77,11 @@ void UMultiplayGameInstance::LoadInGameMenu()
 
 void UMultiplayGameInstance::Host()
 {
-	UE_LOG(LogTemp, Warning, TEXT("GameInstance Exec Host"));
-	if(GEngine)
+	const IOnlineSessionPtr SessionInterface = OnlineSubsystem->GetSessionInterface();
+	if (SessionInterface.IsValid())
 	{
-		GEngine->AddOnScreenDebugMessage(0, 2, FColor::Green, TEXT("Host"));
-	}
-	if(Main!=nullptr)
-	{
-		Main->Teardown();
-	}
-	auto world = GetWorld();
-	if(world)
-	{
-		world->ServerTravel("/Game/ThirdPerson/Maps/ThirdPersonMap?listen");
+		FOnlineSessionSettings SessionSettings;
+		SessionInterface->CreateSession(0, TEXT("My Session Game"), SessionSettings);
 	}
 }
 
@@ -111,5 +106,27 @@ void UMultiplayGameInstance::LoadMainMenu()
 	auto pc = GetFirstLocalPlayerController(GetWorld());
 	if (pc) {
 		pc->ClientTravel("/Game/Multiplay_Learn/Maps/MainMenu", ETravelType::TRAVEL_Absolute);
+	}
+}
+
+void UMultiplayGameInstance::OnCreateSessionComplete(FName SessionName, bool Success)
+{
+	if(!Success)
+	{
+		return;
+	}
+	UE_LOG(LogTemp, Warning, TEXT("GameInstance Exec Host"));
+	if (GEngine)
+	{
+		GEngine->AddOnScreenDebugMessage(0, 2, FColor::Green, TEXT("Host"));
+	}
+	if (Main != nullptr)
+	{
+		Main->Teardown();
+	}
+	auto world = GetWorld();
+	if (world)
+	{
+		world->ServerTravel("/Game/ThirdPerson/Maps/ThirdPersonMap?listen");
 	}
 }

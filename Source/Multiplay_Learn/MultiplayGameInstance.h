@@ -41,4 +41,7 @@ private:
 	class UMainMenu* Main;
 	class UInGameMenu* InGame;
 	IOnlineSubsystem* OnlineSubsystem;
+
+	void OnCreateSessionComplete(FName SessionName, bool Success);
+
 };
