@@ -7,6 +7,7 @@
 #include "MenuSystem/MenuInterface.h"
 #include "MultiplayGameInstance.generated.h"
 
+class FOnlineSessionSearch;
 class IOnlineSubsystem;
 /**
  * 
@@ -41,8 +42,9 @@ private:
 	class UMainMenu* Main;
 	class UInGameMenu* InGame;
 	IOnlineSubsystem* OnlineSubsystem;
-
+	TSharedPtr<FOnlineSessionSearch> SessionSearch;
 	void OnCreateSessionComplete(FName SessionName, bool Success);
 	void OnDestroySessionComplete(FName SessionName, bool Success);
+	void OnFindSessionComplete(bool Success);
 	void CreateSession();
 };
