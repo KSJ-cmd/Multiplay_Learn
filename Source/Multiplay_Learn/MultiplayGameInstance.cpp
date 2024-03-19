@@ -11,6 +11,8 @@
 #include "OnlineSessionSettings.h"
 #include "Interfaces/OnlineSessionInterface.h"
 
+const static  FName SESSION_NAME = TEXT("My Session Game");
+
 UMultiplayGameInstance::UMultiplayGameInstance(const FObjectInitializer& ObjectInitializer)
 {
 	static ConstructorHelpers::FClassFinder<UUserWidget> MainMenuBPClass(TEXT("/Game/MenuSystem/WBP_MainMenu"));
@@ -42,6 +44,7 @@ void UMultiplayGameInstance::Init()
 		{
 
 			SessionInterface->OnCreateSessionCompleteDelegates.AddUObject(this, &UMultiplayGameInstance::OnCreateSessionComplete);
+			SessionInterface->OnDestroySessionCompleteDelegates.AddUObject(this, &UMultiplayGameInstance::OnDestroySessionComplete);
 		}
 
 	}else
@@ -80,8 +83,15 @@ void UMultiplayGameInstance::Host()
 	const IOnlineSessionPtr SessionInterface = OnlineSubsystem->GetSessionInterface();
 	if (SessionInterface.IsValid())
 	{
-		FOnlineSessionSettings SessionSettings;
-		SessionInterface->CreateSession(0, TEXT("My Session Game"), SessionSettings);
+		auto namedSession = SessionInterface->GetNamedSession(SESSION_NAME);
+		if (namedSession != nullptr)
+		{
+			SessionInterface->DestroySession(SESSION_NAME);
+		}
+		else
+		{
+			CreateSession();
+		}
 	}
 }
 
@@ -128,5 +138,22 @@ void UMultiplayGameInstance::OnCreateSessionComplete(FName SessionName, bool Suc
 	if (world)
 	{
 		world->ServerTravel("/Game/ThirdPerson/Maps/ThirdPersonMap?listen");
+	}
+}
+
+void UMultiplayGameInstance::OnDestroySessionComplete(FName SessionName, bool Success)
+{
+	if(Success)
+	{
+		CreateSession();
+	}
+}
+
+void UMultiplayGameInstance::CreateSession()
+{
+	const IOnlineSessionPtr SessionInterface = OnlineSubsystem->GetSessionInterface();
+	if (SessionInterface.IsValid()) {
+		FOnlineSessionSettings SessionSettings;
+		SessionInterface->CreateSession(0, SESSION_NAME, SessionSettings);
 	}
 }
