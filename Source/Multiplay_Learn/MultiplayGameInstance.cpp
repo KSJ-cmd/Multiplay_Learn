@@ -49,6 +49,8 @@ void UMultiplayGameInstance::Init()
 			SessionSearch = MakeShareable(new FOnlineSessionSearch());
 			if(SessionSearch.IsValid())
 			{
+				SessionSearch->bIsLanQuery = true;
+				UE_LOG(LogTemp, Warning, TEXT("Start FindSession"));
 				SessionInterface->FindSessions(0, SessionSearch.ToSharedRef());
 			}
 		}
@@ -157,9 +159,16 @@ void UMultiplayGameInstance::OnDestroySessionComplete(FName SessionName, bool Su
 
 void UMultiplayGameInstance::OnFindSessionComplete(bool Success)
 {
-	if(Success)
+	if(Success&&SessionSearch.IsValid())
 	{
-		UE_LOG(LogTemp, Warning, TEXT("FindSession Success"));
+		UE_LOG(LogTemp, Warning, TEXT("Success FindSession"));
+		for(auto& result : SessionSearch->SearchResults)
+		{
+			if(result.IsSessionInfoValid())
+			{
+				UE_LOG(LogTemp, Warning, TEXT("%s"), *result.GetSessionIdStr());
+			}
+		}
 	}
 }
 
@@ -168,6 +177,10 @@ void UMultiplayGameInstance::CreateSession()
 	const IOnlineSessionPtr SessionInterface = OnlineSubsystem->GetSessionInterface();
 	if (SessionInterface.IsValid()) {
 		FOnlineSessionSettings SessionSettings;
+		SessionSettings.bIsLANMatch = true;
+		SessionSettings.NumPublicConnections = 2;
+		SessionSettings.bShouldAdvertise = true;
+
 		SessionInterface->CreateSession(0, SESSION_NAME, SessionSettings);
 	}
 }
