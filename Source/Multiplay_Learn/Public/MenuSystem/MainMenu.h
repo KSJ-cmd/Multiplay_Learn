@@ -15,7 +15,8 @@ UCLASS()
 class MULTIPLAY_LEARN_API UMainMenu : public UMenuWidget
 {
 	GENERATED_BODY()
-
+public:
+	UMainMenu(const FObjectInitializer& ObjectInitializer);
 	
 protected:
 	virtual bool Initialize() override;
@@ -37,6 +38,9 @@ private:
 	class UButton* AddressButton;
 
 	UPROPERTY(meta = (BindWidget))
+	class UPanelWidget* ServerList;
+
+	UPROPERTY(meta = (BindWidget))
 	class UWidget* MainMenu;
 
 	UPROPERTY(meta = (BindWidget))
@@ -45,8 +49,7 @@ private:
 	UPROPERTY(meta = (BindWidget))
 	UWidgetSwitcher* MenuSwitcher;
 
-	UPROPERTY(meta = (BindWidget))
-	UEditableTextBox* AddressInput;
+
 
 	UFUNCTION()
 	void HostServer();
@@ -61,6 +64,8 @@ private:
 	void CancelMenu();
 
 	UFUNCTION()
-	void IPJoin();
+	void JoinServer();
 
+
+	TSubclassOf<class UUserWidget> ServerRowClass;
 };

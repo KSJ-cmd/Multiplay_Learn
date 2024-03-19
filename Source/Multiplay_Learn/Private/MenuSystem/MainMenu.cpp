@@ -5,8 +5,19 @@
 #include "Components/Button.h"
 #include "Components/EditableTextBox.h"
 #include "Components/WidgetSwitcher.h"
+#include "MenuSystem/ServerRow.h"
 #include "Multiplay_Learn/MultiplayGameInstance.h"
 
+
+UMainMenu::UMainMenu(const FObjectInitializer& ObjectInitializer)
+	:Super(ObjectInitializer)
+{
+	static ConstructorHelpers::FClassFinder<UUserWidget> ServerRowBPClass(TEXT("/Game/MenuSystem/WBP_ServerRow"));
+	if (ServerRowBPClass.Class != nullptr)
+	{
+		ServerRowClass = ServerRowBPClass.Class;
+	}
+}
 
 bool UMainMenu::Initialize()
 {
@@ -26,7 +37,7 @@ bool UMainMenu::Initialize()
 	CancelButton->OnClicked.AddDynamic(this, &UMainMenu::CancelMenu);
 
 	if (!AddressButton) return false;
-	AddressButton->OnClicked.AddDynamic(this, &UMainMenu::IPJoin);
+	AddressButton->OnClicked.AddDynamic(this, &UMainMenu::JoinServer);
 
 	return true;
 }
@@ -73,15 +84,21 @@ void UMainMenu::CancelMenu()
 	MenuSwitcher->SetActiveWidget(MainMenu);
 }
 
-void UMainMenu::IPJoin()
+void UMainMenu::JoinServer()
 {
 	if (!MenuInterface)
 	{
 		UE_LOG(LogTemp, Warning,
 			TEXT("GameInstance nullptr : MainMenu IPJoin Button"));
+
+		UServerRow* Row = CreateWidget<UServerRow>(GetWorld(), ServerRowClass);
+		if(Row)
+		{
+			ServerList->AddChild(Row);
+		}
 	}
-	if (!AddressInput) return;
-	auto address = AddressInput->GetText();
-	MenuInterface->Join(address.ToString());
+	//if (!AddressInput) return;
+	//auto address = AddressInput->GetText();
+	//MenuInterface->Join(address.ToString());
 	
 }
