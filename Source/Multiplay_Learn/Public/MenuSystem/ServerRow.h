@@ -6,6 +6,7 @@
 #include "Blueprint/UserWidget.h"
 #include "ServerRow.generated.h"
 
+class UButton;
 class UTextBlock;
 /**
  * 
@@ -17,4 +18,19 @@ class MULTIPLAY_LEARN_API UServerRow : public UUserWidget
 public:
 	UPROPERTY(meta=(BindWidget))
 	UTextBlock* ServerName;
+	UPROPERTY(meta = (BindWidget))
+	UButton* SelectButton;
+
+	void Setup(class UMainMenu* Parent, uint32 Index);
+protected:
+	virtual bool Initialize() override;
+
+private:
+	UFUNCTION()
+	void ServerSelect();
+
+	uint32 ServerIndex;
+
+	UPROPERTY()
+	class UMainMenu* MainMenu;
 };

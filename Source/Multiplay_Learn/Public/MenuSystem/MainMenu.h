@@ -19,6 +19,8 @@ public:
 	UMainMenu(const FObjectInitializer& ObjectInitializer);
 
 	void SetServerList(TArray<FString> ServerNames);
+
+	void SeleceIndex(uint32 index);
 protected:
 	virtual bool Initialize() override;
 private:
@@ -69,4 +71,6 @@ private:
 
 
 	TSubclassOf<class UUserWidget> ServerRowClass;
+
+	TOptional<uint32> SelectedIndex;
 };
