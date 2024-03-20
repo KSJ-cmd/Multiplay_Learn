@@ -4,6 +4,7 @@
 #include "MenuSystem/MainMenu.h"
 #include "Components/Button.h"
 #include "Components/EditableTextBox.h"
+#include "Components/TextBlock.h"
 #include "Components/WidgetSwitcher.h"
 #include "MenuSystem/ServerRow.h"
 #include "Multiplay_Learn/MultiplayGameInstance.h"
@@ -17,6 +18,24 @@ UMainMenu::UMainMenu(const FObjectInitializer& ObjectInitializer)
 	{
 		ServerRowClass = ServerRowBPClass.Class;
 	}
+}
+
+void UMainMenu::SetServerList(TArray<FString> ServerNames)
+{
+
+	ServerList->ClearChildren();
+
+	for (auto& name : ServerNames)
+	{
+		UServerRow* Row = CreateWidget<UServerRow>(GetWorld(), ServerRowClass);
+		if (Row)
+		{
+			Row->ServerName->SetText(FText::FromString(name));
+			ServerList->AddChild(Row);
+		}
+	}
+
+
 }
 
 bool UMainMenu::Initialize()
@@ -61,7 +80,7 @@ void UMainMenu::OpenJoinMenu()
 			TEXT("GameInstance nullptr : MainMenu Join Button"));
 	}
 	MenuSwitcher->SetActiveWidget(JoinMenu);
-	//MenuInterface->Join();
+	MenuInterface->RefreshServerList();
 }
 
 void UMainMenu::Quit()
@@ -86,19 +105,9 @@ void UMainMenu::CancelMenu()
 
 void UMainMenu::JoinServer()
 {
-	if (!MenuInterface)
-	{
-		UE_LOG(LogTemp, Warning,
-			TEXT("GameInstance nullptr : MainMenu IPJoin Button"));
-
-		UServerRow* Row = CreateWidget<UServerRow>(GetWorld(), ServerRowClass);
-		if(Row)
-		{
-			ServerList->AddChild(Row);
-		}
+	if (MenuInterface != nullptr) {
+	
+		MenuInterface->Join("");
 	}
-	//if (!AddressInput) return;
-	//auto address = AddressInput->GetText();
-	//MenuInterface->Join(address.ToString());
 	
 }

@@ -46,13 +46,7 @@ void UMultiplayGameInstance::Init()
 			SessionInterface->OnCreateSessionCompleteDelegates.AddUObject(this, &UMultiplayGameInstance::OnCreateSessionComplete);
 			SessionInterface->OnDestroySessionCompleteDelegates.AddUObject(this, &UMultiplayGameInstance::OnDestroySessionComplete);
 			SessionInterface->OnFindSessionsCompleteDelegates.AddUObject(this, &UMultiplayGameInstance::OnFindSessionComplete);
-			SessionSearch = MakeShareable(new FOnlineSessionSearch());
-			if(SessionSearch.IsValid())
-			{
-				SessionSearch->bIsLanQuery = true;
-				UE_LOG(LogTemp, Warning, TEXT("Start FindSession"));
-				SessionInterface->FindSessions(0, SessionSearch.ToSharedRef());
-			}
+			
 		}
 
 	}else
@@ -107,16 +101,17 @@ void UMultiplayGameInstance::Join(const FString& Address)
 {
 	if (Main != nullptr)
 	{
-		Main->Teardown();
+		//Main->Teardown();
+		Main->SetServerList({ "test1","test2" });
 	}
-	if (GEngine)
+	/*if (GEngine)
 	{
 		GEngine->AddOnScreenDebugMessage(0, 2, FColor::Green, FString::Printf(TEXT("Join %s"), *Address));;
 	}
 	auto pc = GetFirstLocalPlayerController(GetWorld());
 	if (pc) {
 		pc->ClientTravel(Address, ETravelType::TRAVEL_Absolute);
-	}
+	}*/
 }
 
 void UMultiplayGameInstance::LoadMainMenu()
@@ -125,6 +120,20 @@ void UMultiplayGameInstance::LoadMainMenu()
 	if (pc) {
 		pc->ClientTravel("/Game/Multiplay_Learn/Maps/MainMenu", ETravelType::TRAVEL_Absolute);
 	}
+}
+
+void UMultiplayGameInstance::RefreshServerList()
+{
+	const IOnlineSessionPtr SessionInterface = OnlineSubsystem->GetSessionInterface();
+
+	SessionSearch = MakeShareable(new FOnlineSessionSearch());
+	if (SessionSearch.IsValid())
+	{
+		SessionSearch->bIsLanQuery = true;
+		UE_LOG(LogTemp, Warning, TEXT("Start FindSession"));
+		SessionInterface->FindSessions(0, SessionSearch.ToSharedRef());
+	}
+	
 }
 
 void UMultiplayGameInstance::OnCreateSessionComplete(FName SessionName, bool Success)
@@ -159,16 +168,20 @@ void UMultiplayGameInstance::OnDestroySessionComplete(FName SessionName, bool Su
 
 void UMultiplayGameInstance::OnFindSessionComplete(bool Success)
 {
-	if(Success&&SessionSearch.IsValid())
+	if (Success && SessionSearch.IsValid() && Main != nullptr)
 	{
-		UE_LOG(LogTemp, Warning, TEXT("Success FindSession"));
-		for(auto& result : SessionSearch->SearchResults)
+
+		TArray<FString> SessionNames;
+		for (auto& result : SessionSearch->SearchResults)
 		{
-			if(result.IsSessionInfoValid())
+			if (result.IsSessionInfoValid())
 			{
+				SessionNames.Add(result.GetSessionIdStr());
 				UE_LOG(LogTemp, Warning, TEXT("%s"), *result.GetSessionIdStr());
 			}
 		}
+		Main->SetServerList(SessionNames);
+		UE_LOG(LogTemp, Warning, TEXT("Success FindSession"));
 	}
 }
 
