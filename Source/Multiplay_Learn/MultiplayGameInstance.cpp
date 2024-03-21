@@ -46,7 +46,7 @@ void UMultiplayGameInstance::Init()
 			SessionInterface->OnCreateSessionCompleteDelegates.AddUObject(this, &UMultiplayGameInstance::OnCreateSessionComplete);
 			SessionInterface->OnDestroySessionCompleteDelegates.AddUObject(this, &UMultiplayGameInstance::OnDestroySessionComplete);
 			SessionInterface->OnFindSessionsCompleteDelegates.AddUObject(this, &UMultiplayGameInstance::OnFindSessionComplete);
-			
+			SessionInterface->OnJoinSessionCompleteDelegates.AddUObject(this, &UMultiplayGameInstance::OnJoinSessionComplete);
 		}
 
 	}else
@@ -97,13 +97,20 @@ void UMultiplayGameInstance::Host()
 	}
 }
 
-void UMultiplayGameInstance::Join(const FString& Address)
+void UMultiplayGameInstance::Join(uint32 Index)
 {
+
+	if (!SessionSearch.IsValid()) return;
+	const auto SessionInterface = OnlineSubsystem->GetSessionInterface();
+	if (!SessionInterface.IsValid()) return;
 	if (Main != nullptr)
 	{
-		//Main->Teardown();
-		Main->SetServerList({ "test1","test2" });
+		Main->Teardown();
+		
 	}
+
+	SessionInterface->JoinSession(0, SESSION_NAME, SessionSearch->SearchResults[Index]);
+	
 	/*if (GEngine)
 	{
 		GEngine->AddOnScreenDebugMessage(0, 2, FColor::Green, FString::Printf(TEXT("Join %s"), *Address));;
@@ -195,5 +202,19 @@ void UMultiplayGameInstance::CreateSession()
 		SessionSettings.bShouldAdvertise = true;
 
 		SessionInterface->CreateSession(0, SESSION_NAME, SessionSettings);
+	}
+}
+
+void UMultiplayGameInstance::OnJoinSessionComplete(FName SessionName, EOnJoinSessionCompleteResult::Type ResultType)
+{
+
+	const auto SessionInterface = OnlineSubsystem->GetSessionInterface();
+	if (!SessionInterface.IsValid()) return;
+	FString URL;
+	SessionInterface->GetResolvedConnectString(SESSION_NAME, URL);
+	UE_LOG(LogTemp, Warning, TEXT("OnJoinSessionComplete ConnectInfo : %s"), *URL);
+	auto pc = GetFirstLocalPlayerController(GetWorld());
+	if (pc) {
+		pc->ClientTravel(URL, ETravelType::TRAVEL_Absolute);
 	}
 }

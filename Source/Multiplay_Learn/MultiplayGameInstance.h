@@ -5,6 +5,7 @@
 #include "CoreMinimal.h"
 #include "Engine/GameInstance.h"
 #include "MenuSystem/MenuInterface.h"
+#include "Interfaces/OnlineSessionInterface.h"
 #include "MultiplayGameInstance.generated.h"
 
 class FOnlineSessionSearch;
@@ -30,7 +31,7 @@ public:
 	virtual void Host() override;
 
 	UFUNCTION(Exec)
-	virtual void Join(const FString& Address) override;
+	virtual void Join(uint32 Index) override;
 
 	UFUNCTION()
 	virtual void LoadMainMenu() override;
@@ -49,4 +50,5 @@ private:
 	void OnDestroySessionComplete(FName SessionName, bool Success);
 	void OnFindSessionComplete(bool Success);
 	void CreateSession();
+	void OnJoinSessionComplete(FName SessionName, EOnJoinSessionCompleteResult::Type ResultType);
 };

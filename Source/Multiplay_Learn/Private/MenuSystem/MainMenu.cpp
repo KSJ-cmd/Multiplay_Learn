@@ -112,17 +112,14 @@ void UMainMenu::CancelMenu()
 
 void UMainMenu::JoinServer()
 {
-	if(SelectedIndex.IsSet())
+	if (SelectedIndex.IsSet() && MenuInterface != nullptr)
 	{
 		UE_LOG(LogTemp, Warning, TEXT("Selected index %d"), SelectedIndex.GetValue());
-	}else
+		MenuInterface->Join(SelectedIndex.GetValue());
+	}
+	else
 	{
 		UE_LOG(LogTemp, Warning, TEXT("Selected index not set"));
-	
+
 	}
-	if (MenuInterface != nullptr) {
-	
-		MenuInterface->Join("");
-	}
-	
-}
+};
