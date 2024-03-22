@@ -143,7 +143,7 @@ void UMultiplayGameInstance::RefreshServerList()
 		UE_LOG(LogTemp, Warning, TEXT("Start FindSession"));
 
 		const ULocalPlayer* LocalPlayer = GetWorld()->GetFirstLocalPlayerFromController();
-		SessionInterface->FindSessions(*LocalPlayer->GetPreferredUniqueNetId(), SessionSearch.ToSharedRef());
+		SessionInterface->FindSessions(0, SessionSearch.ToSharedRef());
 	}
 	
 }
@@ -209,7 +209,7 @@ void UMultiplayGameInstance::CreateSession()
 		SessionSettings.bAllowJoinViaPresence = true;
 		SessionSettings.bUsesPresence = true;
 		const ULocalPlayer* LocalPlayer = GetWorld()->GetFirstLocalPlayerFromController();
-		SessionInterface->CreateSession(*LocalPlayer->GetPreferredUniqueNetId(), SESSION_NAME, SessionSettings);
+		SessionInterface->CreateSession(0, SESSION_NAME, SessionSettings);
 	}
 }
 
