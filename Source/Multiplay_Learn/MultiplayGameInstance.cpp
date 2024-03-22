@@ -192,8 +192,8 @@ void UMultiplayGameInstance::OnFindSessionComplete(bool Success)
 		{
 			FServerData Data;
 			Data.Name =result.GetSessionIdStr();
-			Data.CurrentPlayers = result.Session.NumOpenPublicConnections;
 			Data.MaxPlayers = result.Session.SessionSettings.NumPublicConnections;
+			Data.CurrentPlayers = Data.MaxPlayers - result.Session.NumOpenPublicConnections;
 			Data.HostUserName = result.Session.OwningUserName;
 			SessionDatas.Add(Data);
 		}
