@@ -187,9 +187,11 @@ void UMultiplayGameInstance::OnFindSessionComplete(bool Success)
 
 		TArray<FString> SessionNames;
 		UE_LOG(LogTemp, Warning, TEXT("OnFindSessionComplete : result Num : %d"), SessionSearch->SearchResults.Num());
+		SessionNames.Add("Test1");
+		SessionNames.Add("Test2");
 		for (auto& result : SessionSearch->SearchResults)
 		{
-
+			
 			SessionNames.Add(result.GetSessionIdStr());
 			UE_LOG(LogTemp, Warning, TEXT("%s"), *result.GetSessionIdStr());
 			UE_LOG(LogTemp, Warning, TEXT("id : %s"), *result.Session.OwningUserId.Get()->ToString());

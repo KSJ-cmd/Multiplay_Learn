@@ -21,6 +21,9 @@ public:
 	UPROPERTY(meta = (BindWidget))
 	UButton* SelectButton;
 
+	UPROPERTY(BlueprintReadOnly)
+	bool isSelected = false;
+
 	void Setup(class UMainMenu* Parent, uint32 Index);
 protected:
 	virtual bool Initialize() override;

@@ -40,9 +40,25 @@ void UMainMenu::SetServerList(TArray<FString> ServerNames)
 
 }
 
+void UMainMenu::UpdateChildren()
+{
+	
+	for(int i =0;i<ServerList->GetChildrenCount();++i)
+	{
+		auto Row = Cast<UServerRow>(ServerList->GetChildAt(i));
+
+		if(Row!=nullptr)
+		{
+			Row->isSelected = (SelectedIndex.IsSet() && SelectedIndex.GetValue() == i);
+	
+		}
+	}
+}
+
 void UMainMenu::SeleceIndex(uint32 index)
 {
 	SelectedIndex = index;
+	UpdateChildren();
 }
 
 bool UMainMenu::Initialize()

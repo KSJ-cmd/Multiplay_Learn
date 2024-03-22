@@ -20,6 +20,7 @@ public:
 
 	void SetServerList(TArray<FString> ServerNames);
 
+	void UpdateChildren();
 	void SeleceIndex(uint32 index);
 protected:
 	virtual bool Initialize() override;
