@@ -137,7 +137,7 @@ void UMultiplayGameInstance::RefreshServerList()
 	SessionSearch = MakeShareable(new FOnlineSessionSearch());
 	if (SessionSearch.IsValid())
 	{
-		SessionSearch->bIsLanQuery = false;
+		//SessionSearch->bIsLanQuery = false;
 		SessionSearch->MaxSearchResults = 1000000;
 		SessionSearch->QuerySettings.Set(SEARCH_PRESENCE, true, EOnlineComparisonOp::Equals);
 		UE_LOG(LogTemp, Warning, TEXT("Start FindSession"));
@@ -164,6 +164,8 @@ void UMultiplayGameInstance::OnCreateSessionComplete(FName SessionName, bool Suc
 		Main->Teardown();
 	}
 	auto world = GetWorld();
+	const IOnlineSessionPtr SessionInterface = OnlineSubsystem->GetSessionInterface();
+	UE_LOG(LogTemp, Warning, TEXT("Session ID : %s"), *SessionInterface->GetNamedSession(SESSION_NAME)->GetSessionIdStr());
 	if (world)
 	{
 		world->ServerTravel("/Game/ThirdPerson/Maps/ThirdPersonMap?listen");
@@ -190,7 +192,7 @@ void UMultiplayGameInstance::OnFindSessionComplete(bool Success)
 
 			SessionNames.Add(result.GetSessionIdStr());
 			UE_LOG(LogTemp, Warning, TEXT("%s"), *result.GetSessionIdStr());
-
+			UE_LOG(LogTemp, Warning, TEXT("id : %s"), *result.Session.OwningUserId.Get()->ToString());
 		}
 		Main->SetServerList(SessionNames);
 		UE_LOG(LogTemp, Warning, TEXT("Success FindSession"));
@@ -210,6 +212,7 @@ void UMultiplayGameInstance::CreateSession()
 		SessionSettings.bUsesPresence = true;
 		const ULocalPlayer* LocalPlayer = GetWorld()->GetFirstLocalPlayerFromController();
 		SessionInterface->CreateSession(0, SESSION_NAME, SessionSettings);
+		
 	}
 }
 
