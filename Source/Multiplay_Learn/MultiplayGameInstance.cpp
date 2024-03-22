@@ -212,6 +212,7 @@ void UMultiplayGameInstance::CreateSession()
 		SessionSettings.bAllowJoinInProgress = true;
 		SessionSettings.bAllowJoinViaPresence = true;
 		SessionSettings.bUsesPresence = true;
+		SessionSettings.bUseLobbiesIfAvailable = true;
 		const ULocalPlayer* LocalPlayer = GetWorld()->GetFirstLocalPlayerFromController();
 		SessionInterface->CreateSession(0, SESSION_NAME, SessionSettings);
 		
