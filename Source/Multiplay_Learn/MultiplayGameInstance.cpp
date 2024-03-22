@@ -193,6 +193,8 @@ void UMultiplayGameInstance::OnFindSessionComplete(bool Success)
 			SessionNames.Add(result.GetSessionIdStr());
 			UE_LOG(LogTemp, Warning, TEXT("%s"), *result.GetSessionIdStr());
 			UE_LOG(LogTemp, Warning, TEXT("id : %s"), *result.Session.OwningUserId.Get()->ToString());
+			
+			UE_LOG(LogTemp, Warning, TEXT("search Session id : %s"), *result.Session.SessionInfo->GetSessionId().ToString());
 		}
 		Main->SetServerList(SessionNames);
 		UE_LOG(LogTemp, Warning, TEXT("Success FindSession"));
