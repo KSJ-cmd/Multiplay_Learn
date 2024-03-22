@@ -201,8 +201,10 @@ void UMultiplayGameInstance::CreateSession()
 	if (SessionInterface.IsValid()) {
 		FOnlineSessionSettings SessionSettings;
 		SessionSettings.bIsLANMatch = false;
-		SessionSettings.NumPublicConnections = 2;
+		SessionSettings.NumPublicConnections = 4;
 		SessionSettings.bShouldAdvertise = true;
+		SessionSettings.bAllowJoinInProgress = true;
+		SessionSettings.bAllowJoinViaPresence = true;
 		SessionSettings.bUsesPresence = true;
 		SessionInterface->CreateSession(0, SESSION_NAME, SessionSettings);
 	}
