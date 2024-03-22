@@ -138,6 +138,7 @@ void UMultiplayGameInstance::RefreshServerList()
 	if (SessionSearch.IsValid())
 	{
 		//SessionSearch->bIsLanQuery = true;
+		SessionSearch->1000;
 		SessionSearch->QuerySettings.Set(SEARCH_PRESENCE, true, EOnlineComparisonOp::Equals);
 		UE_LOG(LogTemp, Warning, TEXT("Start FindSession"));
 		SessionInterface->FindSessions(0, SessionSearch.ToSharedRef());
