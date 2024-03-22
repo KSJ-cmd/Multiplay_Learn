@@ -19,6 +19,10 @@ public:
 	UPROPERTY(meta=(BindWidget))
 	UTextBlock* ServerName;
 	UPROPERTY(meta = (BindWidget))
+	UTextBlock* HostName;
+	UPROPERTY(meta = (BindWidget))
+	UTextBlock* ServerPersons;
+	UPROPERTY(meta = (BindWidget))
 	UButton* SelectButton;
 
 	UPROPERTY(BlueprintReadOnly)

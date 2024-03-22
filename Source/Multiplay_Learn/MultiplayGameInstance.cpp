@@ -185,20 +185,19 @@ void UMultiplayGameInstance::OnFindSessionComplete(bool Success)
 	if (Success && SessionSearch.IsValid() && Main != nullptr)
 	{
 
-		TArray<FString> SessionNames;
+		TArray<FServerData> SessionDatas;
 		UE_LOG(LogTemp, Warning, TEXT("OnFindSessionComplete : result Num : %d"), SessionSearch->SearchResults.Num());
-		SessionNames.Add("Test1");
-		SessionNames.Add("Test2");
+	
 		for (auto& result : SessionSearch->SearchResults)
 		{
-			
-			SessionNames.Add(result.GetSessionIdStr());
-			UE_LOG(LogTemp, Warning, TEXT("%s"), *result.GetSessionIdStr());
-			UE_LOG(LogTemp, Warning, TEXT("id : %s"), *result.Session.OwningUserId.Get()->ToString());
-			
-			UE_LOG(LogTemp, Warning, TEXT("search Session id : %s"), *result.Session.SessionInfo->GetSessionId().ToString());
+			FServerData Data;
+			Data.Name =result.GetSessionIdStr();
+			Data.CurrentPlayers = result.Session.NumOpenPublicConnections;
+			Data.MaxPlayers = result.Session.SessionSettings.NumPublicConnections;
+			Data.HostUserName = result.Session.OwningUserName;
+			SessionDatas.Add(Data);
 		}
-		Main->SetServerList(SessionNames);
+		Main->SetServerList(SessionDatas);
 		UE_LOG(LogTemp, Warning, TEXT("Success FindSession"));
 	}
 }
@@ -208,7 +207,14 @@ void UMultiplayGameInstance::CreateSession()
 	const IOnlineSessionPtr SessionInterface = OnlineSubsystem->GetSessionInterface();
 	if (SessionInterface.IsValid()) {
 		FOnlineSessionSettings SessionSettings;
-		SessionSettings.bIsLANMatch = false;
+
+		if(OnlineSubsystem->GetSubsystemName() == "NULL")
+		{
+			SessionSettings.bIsLANMatch = true;
+		}
+		else {
+			SessionSettings.bIsLANMatch = false;
+		}
 		SessionSettings.NumPublicConnections = 4;
 		SessionSettings.bShouldAdvertise = true;
 		SessionSettings.bAllowJoinInProgress = true;

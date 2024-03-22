@@ -8,6 +8,18 @@
 
 class UEditableTextBox;
 class UWidgetSwitcher;
+
+
+USTRUCT()
+struct FServerData
+{
+	GENERATED_BODY()
+public:
+	FString Name;
+	uint16 CurrentPlayers;
+	uint16 MaxPlayers;
+	FString HostUserName;
+};
 /**
  * 
  */
@@ -18,7 +30,7 @@ class MULTIPLAY_LEARN_API UMainMenu : public UMenuWidget
 public:
 	UMainMenu(const FObjectInitializer& ObjectInitializer);
 
-	void SetServerList(TArray<FString> ServerNames);
+	void SetServerList(TArray<FServerData> ServerNames);
 
 	void UpdateChildren();
 	void SeleceIndex(uint32 index);
