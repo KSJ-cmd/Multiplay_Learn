@@ -169,7 +169,7 @@ void UMultiplayGameInstance::OnCreateSessionComplete(FName SessionName, bool Suc
 	UE_LOG(LogTemp, Warning, TEXT("Session ID : %s"), *SessionInterface->GetNamedSession(SESSION_NAME)->GetSessionIdStr());
 	if (world)
 	{
-		world->ServerTravel("/Game/ThirdPerson/Maps/ThirdPersonMap?listen");
+		world->ServerTravel("/Game/Multiplay_Learn/Maps/Lobby?listen");
 	}
 }
 
