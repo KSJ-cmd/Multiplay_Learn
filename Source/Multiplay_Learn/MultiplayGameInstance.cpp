@@ -30,6 +30,11 @@ UMultiplayGameInstance::UMultiplayGameInstance(const FObjectInitializer& ObjectI
 
 
 	UE_LOG(LogTemp, Warning, TEXT("GameInstance Constructor"));
+
+	if(GEngine!=nullptr)
+	{
+		GEngine->OnNetworkFailure().AddUObject(this, &UMultiplayGameInstance::NetworkFailure);
+	}
 }
 
 void UMultiplayGameInstance::Init()
@@ -253,4 +258,10 @@ void UMultiplayGameInstance::OnJoinSessionComplete(FName SessionName, EOnJoinSes
 	if (pc) {
 		pc->ClientTravel(URL, ETravelType::TRAVEL_Absolute);
 	}
+}
+
+void UMultiplayGameInstance::NetworkFailure(UWorld* World, UNetDriver* NetDriver, ENetworkFailure::Type FailureType,
+	const FString& errorString)
+{
+	LoadMainMenu();
 }
