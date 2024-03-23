@@ -12,8 +12,8 @@
 #include "Interfaces/OnlineSessionInterface.h"
 #include "Online/OnlineSessionNames.h"
 
-const static  FName SESSION_NAME = TEXT("My Session Game");
-
+const static FName SESSION_NAME = TEXT("My Session Game");
+const static FName SERVER_NAME_SETTINGS_KEY = TEXT("HostName");
 UMultiplayGameInstance::UMultiplayGameInstance(const FObjectInitializer& ObjectInitializer)
 {
 	static ConstructorHelpers::FClassFinder<UUserWidget> MainMenuBPClass(TEXT("/Game/MenuSystem/WBP_MainMenu"));
@@ -81,19 +81,20 @@ void UMultiplayGameInstance::LoadInGameMenu()
 	}
 }
 
-void UMultiplayGameInstance::Host()
+void UMultiplayGameInstance::Host(FString hostName)
 {
 	const IOnlineSessionPtr SessionInterface = OnlineSubsystem->GetSessionInterface();
 	if (SessionInterface.IsValid())
 	{
 		auto namedSession = SessionInterface->GetNamedSession(SESSION_NAME);
+		this->HostName = hostName;
 		if (namedSession != nullptr)
 		{
 			SessionInterface->DestroySession(SESSION_NAME);
 		}
 		else
 		{
-			CreateSession();
+			CreateSession(this->HostName);
 		}
 	}
 }
@@ -176,7 +177,7 @@ void UMultiplayGameInstance::OnDestroySessionComplete(FName SessionName, bool Su
 {
 	if(Success)
 	{
-		CreateSession();
+		CreateSession(this->HostName);
 	}
 }
 
@@ -191,9 +192,11 @@ void UMultiplayGameInstance::OnFindSessionComplete(bool Success)
 		for (auto& result : SessionSearch->SearchResults)
 		{
 			FServerData Data;
-			Data.Name =result.GetSessionIdStr();
 			Data.MaxPlayers = result.Session.SessionSettings.NumPublicConnections;
 			Data.CurrentPlayers = Data.MaxPlayers - result.Session.NumOpenPublicConnections;
+			FString hostName;
+			result.Session.SessionSettings.Get(SERVER_NAME_SETTINGS_KEY, hostName);
+			Data.Name = hostName;
 			Data.HostUserName = result.Session.OwningUserName;
 			SessionDatas.Add(Data);
 		}
@@ -202,7 +205,7 @@ void UMultiplayGameInstance::OnFindSessionComplete(bool Success)
 	}
 }
 
-void UMultiplayGameInstance::CreateSession()
+void UMultiplayGameInstance::CreateSession(FString hostName)
 {
 	const IOnlineSessionPtr SessionInterface = OnlineSubsystem->GetSessionInterface();
 	if (SessionInterface.IsValid()) {
@@ -222,6 +225,8 @@ void UMultiplayGameInstance::CreateSession()
 		SessionSettings.bUsesPresence = true;
 		SessionSettings.bUseLobbiesIfAvailable = true;
 		const ULocalPlayer* LocalPlayer = GetWorld()->GetFirstLocalPlayerFromController();
+		SessionSettings.Set(SERVER_NAME_SETTINGS_KEY, hostName, EOnlineDataAdvertisementType::ViaOnlineServiceAndPing);
+
 		SessionInterface->CreateSession(0, SESSION_NAME, SessionSettings);
 		
 	}

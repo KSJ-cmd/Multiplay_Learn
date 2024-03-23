@@ -87,18 +87,24 @@ bool UMainMenu::Initialize()
 	if (!AddressButton) return false;
 	AddressButton->OnClicked.AddDynamic(this, &UMainMenu::JoinServer);
 
+	if (!ConfirmHostButton) return false;
+	ConfirmHostButton->OnClicked.AddDynamic(this, &UMainMenu::ConfirmHost);
+
+	if (!CancelHostButton) return false;
+	CancelHostButton->OnClicked.AddDynamic(this, &UMainMenu::CancelHost);
+
 	return true;
 }
 
 void UMainMenu::HostServer()
 {
-
-	if(!MenuInterface)
+	if (!MenuInterface)
 	{
-		UE_LOG(LogTemp, Warning, 
-			TEXT("GameInstance nullptr : MainMenu Host Button"));
+		UE_LOG(LogTemp, Warning,
+			TEXT("GameInstance nullptr : MainMenu Join Button"));
 	}
-	MenuInterface->Host();
+	MenuSwitcher->SetActiveWidget(HostMenu);
+	
 }
 
 void UMainMenu::OpenJoinMenu()
@@ -144,4 +150,34 @@ void UMainMenu::JoinServer()
 		UE_LOG(LogTemp, Warning, TEXT("Selected index not set"));
 
 	}
-};
+}
+
+void UMainMenu::ConfirmHost()
+{
+	if (!MenuInterface)
+	{
+		UE_LOG(LogTemp, Warning,
+			TEXT("GameInstance nullptr : MainMenu Host Button"));
+	}
+	if (InputHostName->GetText().ToString() != "") {
+		UE_LOG(LogTemp, Warning,
+			TEXT("Hosting..."));
+		FString Name = InputHostName->GetText().ToString();
+		MenuInterface->Host(Name);
+	}else
+	{
+		UE_LOG(LogTemp, Warning,
+			TEXT("HostName empty"));
+	}
+}
+
+void UMainMenu::CancelHost()
+{
+	if (MenuSwitcher == nullptr)
+	{
+		UE_LOG(LogTemp, Warning,
+			TEXT("GameInstance nullptr : Input_Join_IP_Menu Switcher"));
+		return;
+	}
+	MenuSwitcher->SetActiveWidget(MainMenu);
+}

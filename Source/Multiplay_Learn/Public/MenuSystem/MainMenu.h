@@ -37,7 +37,7 @@ public:
 protected:
 	virtual bool Initialize() override;
 private:
-
+	//MainMenu
 	UPROPERTY(meta = (BindWidget))
 	class UButton* HostButton;
 
@@ -47,6 +47,7 @@ private:
 	UPROPERTY(meta = (BindWidget))
 	class UButton* QuitButton;
 
+	//JoinMenu
 	UPROPERTY(meta = (BindWidget))
 	class UButton* CancelButton;
 
@@ -56,12 +57,27 @@ private:
 	UPROPERTY(meta = (BindWidget))
 	class UPanelWidget* ServerList;
 
+	//HostMenu
+	UPROPERTY(meta = (BindWidget))
+	class UEditableTextBox* InputHostName;
+
+	UPROPERTY(meta = (BindWidget))
+	class UButton* ConfirmHostButton;
+
+	UPROPERTY(meta = (BindWidget))
+	class UButton* CancelHostButton;
+
+	//Menu ptr
 	UPROPERTY(meta = (BindWidget))
 	class UWidget* MainMenu;
 
 	UPROPERTY(meta = (BindWidget))
 	class UWidget* JoinMenu;
 
+	UPROPERTY(meta = (BindWidget))
+	class UWidget* HostMenu;
+
+	
 	UPROPERTY(meta = (BindWidget))
 	UWidgetSwitcher* MenuSwitcher;
 
@@ -82,7 +98,12 @@ private:
 	UFUNCTION()
 	void JoinServer();
 
+	UFUNCTION()
+	void ConfirmHost();
 
+	UFUNCTION()
+	void CancelHost();
+	
 	TSubclassOf<class UUserWidget> ServerRowClass;
 
 	TOptional<uint32> SelectedIndex;

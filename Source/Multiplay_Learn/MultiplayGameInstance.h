@@ -28,7 +28,7 @@ public:
 	void LoadInGameMenu();
 
 	UFUNCTION()
-	virtual void Host() override;
+	virtual void Host(FString HostName) override;
 
 	UFUNCTION(Exec)
 	virtual void Join(uint32 Index) override;
@@ -49,6 +49,8 @@ private:
 	void OnCreateSessionComplete(FName SessionName, bool Success);
 	void OnDestroySessionComplete(FName SessionName, bool Success);
 	void OnFindSessionComplete(bool Success);
-	void CreateSession();
+	void CreateSession(FString HostName);
 	void OnJoinSessionComplete(FName SessionName, EOnJoinSessionCompleteResult::Type ResultType);
+
+	FString HostName;
 };
