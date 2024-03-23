@@ -18,4 +18,9 @@ public:
 	virtual void Logout(AController* Exiting) override;
 private:
 	uint32 NumberOfPlayers=0;
+
+	FTimerHandle SessionTimerHandle;
+
+	void StartGame();
 };
+

@@ -12,7 +12,7 @@
 #include "Interfaces/OnlineSessionInterface.h"
 #include "Online/OnlineSessionNames.h"
 
-const static FName SESSION_NAME = TEXT("My Session Game");
+const static FName SESSION_NAME = EName::GameSession;
 const static FName SERVER_NAME_SETTINGS_KEY = TEXT("HostName");
 UMultiplayGameInstance::UMultiplayGameInstance(const FObjectInitializer& ObjectInitializer)
 {
@@ -123,6 +123,15 @@ void UMultiplayGameInstance::Join(uint32 Index)
 	}*/
 }
 
+void UMultiplayGameInstance::StartSession()
+{
+	const auto SessionInterface = OnlineSubsystem->GetSessionInterface();
+	if(SessionInterface != nullptr)
+	{
+		SessionInterface->StartSession(SESSION_NAME);
+	}
+}
+
 void UMultiplayGameInstance::LoadMainMenu()
 {
 	auto pc = GetFirstLocalPlayerController(GetWorld());
@@ -194,10 +203,10 @@ void UMultiplayGameInstance::OnFindSessionComplete(bool Success)
 			FServerData Data;
 			Data.MaxPlayers = result.Session.SessionSettings.NumPublicConnections;
 			Data.CurrentPlayers = Data.MaxPlayers - result.Session.NumOpenPublicConnections;
+			Data.HostUserName = result.Session.OwningUserName;
 			FString hostName;
 			result.Session.SessionSettings.Get(SERVER_NAME_SETTINGS_KEY, hostName);
 			Data.Name = hostName;
-			Data.HostUserName = result.Session.OwningUserName;
 			SessionDatas.Add(Data);
 		}
 		Main->SetServerList(SessionDatas);
